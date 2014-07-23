@@ -1,0 +1,4 @@
+Files should be named in accordance with the objects they serialize.
+
+Thus, the files in this folder break the snake_case file naming convention,
+in favor of the TitleCase form used in RubyConstantNames seen in class names.
