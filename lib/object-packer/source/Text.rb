@@ -15,7 +15,7 @@
 
 ---
 CLASS ThoughtTrace::Text
-ARGS font_name x y height string
+FIELDS font_name x y height string
 
 OBJECT font(font_name)
 ---

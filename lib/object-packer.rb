@@ -135,7 +135,7 @@ def parse_header(header)
 	hash['CLASS'] = hash['CLASS'].first # only one
 	
 	
-	# hash['ARGS'] # this is totally fine
+	# hash['FIELDS'] # this is totally fine
 	
 	
 	

@@ -1,6 +1,6 @@
 ---
 CLASS ThoughtTrace::Circle
-ARGS x y radius
+FIELDS x y radius
 
 OBJECT circle(radius)
 ---

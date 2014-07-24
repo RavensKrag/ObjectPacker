@@ -1,6 +1,6 @@
 ---
 CLASS ThoughtTrace::Rectangle
-ARGS x y width height
+FIELDS x y width height
 
 OBJECT rectangle(width, height)
 ---

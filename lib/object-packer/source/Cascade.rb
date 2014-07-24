@@ -1,6 +1,6 @@
 ---
 CLASS ThoughtTrace::Style::Cascade
-ARGS name style_name_list
+FIELDS name style_name_list
 
 OBJECT cascade(name)
 ---
