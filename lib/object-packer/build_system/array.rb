@@ -1,5 +1,5 @@
 class Array
-	def find_and_replace(regex, replacement)
+	def find_and_replace!(regex, replacement)
 		return if replacement.nil?
 		
 		self.each do |line|

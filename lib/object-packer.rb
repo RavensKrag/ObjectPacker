@@ -16,6 +16,11 @@ end
 class Foo
 
 
+TEMPLATE_DIR = File.expand_path(
+					File.join('.', 'object-packer', 'templates'), 
+					File.dirname(__FILE__)
+				)
+
 def initialize(source_dir, output_dir)
 	@source_dir = source_dir
 	@output_dir = output_dir
@@ -41,16 +46,21 @@ def run
 			
 			# ---------
 			# file complied_filename => source, template_name do
-				input_filepath  = File.expand_path  source,            @source_dir
-				output_filepath = File.expand_path  complied_filename, @output_dir
+				input_filepath    = File.expand_path  source,            @source_dir
+				template_filepath = File.expand_path  template_name,     TEMPLATE_DIR
+				output_filepath   = File.expand_path  complied_filename, @output_dir
 				
 				
-				make_from_template input_filepath, output_filepath do |lines|
-					# --- operations that apply to ALL lines ---
+				
+				# === deal with source file
+					# --- load file
+					lines = File.readlines(input_filepath)
+					lines.each{ |line|  line.chomp! }
+					
+					# --- preprocessing on all lines
 					lines
 						.collect!{|l| l.strip_comment }
 						.strip_blank_lines!
-					# ------------------------------------------
 					
 					
 					
@@ -62,13 +72,16 @@ def run
 							puts "#{source} ---"
 							p header_data
 							puts "\n\n"
+				
+				
+				
+				# === deal with template -> final complied output
+				make_from_template template_filepath, output_filepath do |lines|
+					lines.find_and_replace!(/CLASS/,  header_data['CLASS'])
+					lines.find_and_replace!(/FIELDS/, header_data['FIELDS'].join(', '))
+					lines.find_and_replace!(/OBJECT/, header_data['OBJECT'][:name])
 					
 					
-					# --- parse template
-					
-					
-					
-					# --- format output
 					
 					
 					
