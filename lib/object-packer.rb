@@ -62,14 +62,18 @@ end
 
 private
 
+
+
 def make_from_template(input_file, output_file, &block)
 	# read in template
 	lines = File.readlines(input_file)
 	
 	# mutate text
-	lines = block.call lines
+	lines.each{ |line|  line.chomp! } # strip trailing newline from every line
 	
-	str = lines.join('') # TODO: see if this line is necessary
+	lines = block.call lines         # let block mutate lines
+	
+	str = lines.join("\n")           # merge the lines back into one text blob
 	
 	# output new file
 	File.open(output_file, 'w') do |f|
