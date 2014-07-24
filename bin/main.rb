@@ -5,5 +5,10 @@ Dir.chdir path_to_file do
 	require '../lib/object-packer'
 end
 
-x = Foo.new('./source/', '')
-x.run
+
+Dir.chdir File.join(path_to_file, '..', 'lib', 'object-packer') do
+	puts Dir.pwd
+	
+	x = Foo.new('./source/', './compiled_files/')
+	x.run
+end
