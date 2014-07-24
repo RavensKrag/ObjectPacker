@@ -6,9 +6,10 @@
 ---
 CLASS ThoughtTrace::Circle
 ARGS x y radius
----
 
 OBJECT circle(radius)
+---
+
 
 circle[:physics].body.p.x = x
 circle[:physics].body.p.y = y
@@ -19,9 +20,10 @@ circle[:physics].body.p.y = y
 ---
 CLASS ThoughtTrace::Rectangle
 ARGS x y width height
----
 
 OBJECT rectangle(width, height)
+---
+
 
 rectangle[:physics].body.p.x = x
 rectangle[:physics].body.p.y = y
