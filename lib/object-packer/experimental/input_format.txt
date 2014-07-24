@@ -1,14 +1,14 @@
-ARGS x y radius
+# it's pretty clear that this file is about manipulating one object
+# you shouldn't have to specify what object you're returning,
+# because it's OBVIOUSLY the one object that keeps getting mutated
+# it's OBVIOUSLY the object that you created created at the start of this block
 
+---
 CLASS ThoughtTrace::Circle
-
-BODY {
+ARGS x y radius
+---
 
 circle = new radius
 
 circle[:physics].body.p.x = x
 circle[:physics].body.p.y = y
-
-}
-
-OBJECT circle
