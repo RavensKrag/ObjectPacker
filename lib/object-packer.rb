@@ -77,10 +77,35 @@ def run
 				
 				# === deal with template -> final complied output
 				make_from_template template_filepath, output_filepath do |lines|
+					# --- basic find-and-replace
 					lines.find_and_replace!(/CLASS/,  header_data['CLASS'])
 					lines.find_and_replace!(/FIELDS/, header_data['FIELDS'].join(', '))
 					lines.find_and_replace!(/OBJECT/, header_data['OBJECT'][:name])
 					
+					
+					# --- parse body formatting in template
+					
+					# body is specified thusly:
+						# BODY {
+						# 	line_processing_method_1
+						# 	line_processing_method_2
+						# 	line_processing_method_3
+						# }.document_process_a.document_process_b
+					# 
+					
+					
+					
+					# --- apply formatting to body data from source file
+					# line_commands.each do |command|
+					# 	body.collect!{ |body_code|  body_code.send command }
+					# end
+					
+					# document_commands.each do |command|
+					# 	body.send command
+					# end
+					
+					
+					# --- inject proper body into the template
 					
 					
 					
