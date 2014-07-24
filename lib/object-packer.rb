@@ -56,6 +56,15 @@ def run
 					
 					header, body = split_header_from_body(lines)
 					
+					hash = parse_header(header)
+					
+					
+					puts "#{source} ---"
+					p hash
+					puts "\n\n"
+					
+					
+					
 					# pseudo return
 					lines
 				end
@@ -107,6 +116,29 @@ def split_header_from_body(lines)
 	return head, tail
 end
 
+
+def parse_header(header)
+	header.reject!{|i| i == '' }
+	
+	hash = 
+		header.inject(Hash.new) do |collection, statement|
+			name, *body = statement.split
+			
+			collection[name] = body
+			
+			collection # pseudo return
+		end
+	
+	
+	
+	
+	hash['CLASS'] = hash['CLASS'].first # only one
+	# hash['ARGS'] # this is totally fine
+	hash['OBJECT'] = hash['OBJECT'].join # got split in a weird place
+	
+
+	return hash
+end
 
 
 
