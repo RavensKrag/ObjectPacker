@@ -54,14 +54,21 @@ def run
 					
 					
 					
+					# --- parse source
 					header, body = split_header_from_body(lines)
 					
-					hash = parse_header(header)
+					header_data = parse_header(header)
+					
+							puts "#{source} ---"
+							p header_data
+							puts "\n\n"
 					
 					
-					puts "#{source} ---"
-					p hash
-					puts "\n\n"
+					# --- parse template
+					
+					
+					
+					# --- format output
 					
 					
 					
@@ -146,9 +153,6 @@ def parse_header(header)
 		# args : part inside the parens (excluding parens)
 		
 		matchdata = /(?<name>.*?)\s*\((?<args>.*)\)/.match hash['OBJECT']
-		
-		
-		p matchdata
 		
 		
 		# format it
