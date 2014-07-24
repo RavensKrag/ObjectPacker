@@ -152,13 +152,14 @@ def parse_header(header)
 		
 		
 		# format it
-		name = matchdata[:name]
-		args = matchdata[:args].split /,\s*/
+		data = {
+			:name => matchdata[:name],
+			:args => matchdata[:args].split(/,\s*/)
+		}
 		
 		
 		# pack it up
-		# TODO: pack this data better. consider a struct or something (or even just a hash)
-		hash['OBJECT'] = [name, *args]
+		hash['OBJECT'] = data
 	
 
 	return hash
