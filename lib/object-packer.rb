@@ -133,8 +133,32 @@ def parse_header(header)
 	
 	
 	hash['CLASS'] = hash['CLASS'].first # only one
+	
+	
 	# hash['ARGS'] # this is totally fine
+	
+	
+	
 	hash['OBJECT'] = hash['OBJECT'].join # got split in a weird place
+		# name(arg, arg, arg, ..., arg)
+		
+		# name : part before the parens start
+		# args : part inside the parens (excluding parens)
+		
+		matchdata = /(?<name>.*?)\s*\((?<args>.*)\)/.match hash['OBJECT']
+		
+		
+		p matchdata
+		
+		
+		# format it
+		name = matchdata[:name]
+		args = matchdata[:args].split /,\s*/
+		
+		
+		# pack it up
+		# TODO: pack this data better. consider a struct or something (or even just a hash)
+		hash['OBJECT'] = [name, *args]
 	
 
 	return hash
