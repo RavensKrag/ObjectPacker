@@ -62,17 +62,11 @@ def run
 						.collect!{|l| l.strip_comment }
 						.strip_blank_lines!
 					
-					
-					
 					# --- parse source
 					header, body = split_header_from_body(source_lines)
 					
 					header_data = parse_header(header)
-					
-							puts "#{source} ---"
-							p header_data
-							puts "\n\n"
-				
+					body_data = body
 				
 				
 				# === deal with template -> final complied output
@@ -93,23 +87,26 @@ def run
 						# }.document_process_a.document_process_b
 					# 
 					
-					start = lines.each_with_index.find{|x,i| x =~ /BODY\s*\{/ }.last
-						puts "start : #{start}"
-					stop  = lines[start..-1].each_with_index.find{|x,i| x =~ /\}/ }.last
-						puts "stop  : #{stop + start}"
+					start, stop = find_body(lines)
+					body_template, lines = extract_body(lines, start, stop)
+					
+					line_commands, document_commands = parse_template_body(body_template)
+					
 					
 					# --- apply formatting to body data from source file
 					# line_commands.each do |command|
-					# 	body.collect!{ |body_code|  body_code.send command }
+					# 	body_data.collect!{ |body_code|  body_code.send command }
 					# end
 					
 					# document_commands.each do |command|
-					# 	body.send command
+					# 	body_data.send command
 					# end
 					
 					
 					# --- inject proper body into the template
-					
+					i = start
+					obj = body_data
+					lines = lines.insert(i, obj).flatten!
 					
 					
 					
@@ -208,6 +205,49 @@ def parse_header(header)
 	
 
 	return hash
+end
+
+
+
+def find_body(template_lines)
+	start = template_lines.each_with_index.find{|x,i| x =~ /BODY\s*\{/ }.last
+		puts "start : #{start}"
+	offset  = template_lines[start..-1].each_with_index.find{|x,i| x =~ /\}/ }.last
+	stop = offset + start
+		puts "stop  : #{stop}"
+	
+	
+	return start, stop
+end
+
+def extract_body(lines, start, stop)
+	range = (start..stop)
+	body_template, lines = lines
+							.each_with_index
+							.partition{ |x,i|  range.include? i }
+							.collect{|i| i.collect{|j|  j.first}}
+	return body_template, lines
+end
+
+def parse_template_body(template_body_lines)
+	# --- get rid of unnecessary whitespace around the lines
+	# (indentation, etc)
+	template_body_lines.each{ |i|  i.strip! }
+	
+	
+	# --- separate the body into relevant segements
+	template_body_lines.shift    # discard the first line ('BODY {' isn't that useful)
+	document_command_data = template_body_lines.pop  # save the last line for later
+	
+	
+	# --- clean up the segments
+	line_commands = template_body_lines.reject{ |i|  i == '' }
+	
+	document_commands = document_command_data.split('.')
+	document_commands.shift # first item is just '}' which is not useful
+	
+	
+	return line_commands, document_commands
 end
 
 
