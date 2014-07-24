@@ -13,9 +13,12 @@
 # ]
 
 
+---
+CLASS ThoughtTrace::Text
 ARGS font_name x y height string
 
-BODY {
+OBJECT font(font_name)
+---
 
 font = ThoughtTrace::Font.new font_name
 text = ThoughtTrace::Text.new font
@@ -27,9 +30,3 @@ text[:physics].body.p.y = y
 
 text.resize!(height) # this only needs to be run when loading
 # TODO: figure out how to resize automatically on font size change ASAP
-
-}
-
-OBJECT text # need more unique identifier for space
-# may not actually need to expose this to the script
-# might want to just add the returned object to the space instead
