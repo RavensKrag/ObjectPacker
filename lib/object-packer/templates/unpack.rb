@@ -14,10 +14,10 @@
 	# because an object can't have methods,
 	# only a class can have methods
 
-klass = ThoughtTrace.const_get(:CLASS_NAME)
+klass = CLASS
 klass.instance_eval do
 
-def unpack(ARGS)
+def unpack(FIELDS)
 	BODY {
 		
 	}.strip_blank_lines!

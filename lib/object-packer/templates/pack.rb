@@ -14,7 +14,7 @@
 	# because an object can't have methods,
 	# only a class can have methods
 
-klass = ThoughtTrace.const_get(:CLASS_NAME)
+klass = CLASS
 klass.class_eval do
 
 def pack
@@ -31,7 +31,7 @@ def pack
 		special_case_property_substitution
 	}.reverse!.strip_blank_lines!
 
-	return ARGS
+	return FIELDS
 
 end
 end
