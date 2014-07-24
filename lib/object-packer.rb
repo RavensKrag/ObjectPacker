@@ -93,7 +93,10 @@ def run
 						# }.document_process_a.document_process_b
 					# 
 					
-					
+					start = lines.each_with_index.find{|x,i| x =~ /BODY\s*\{/ }.last
+						puts "start : #{start}"
+					stop  = lines[start..-1].each_with_index.find{|x,i| x =~ /\}/ }.last
+						puts "stop  : #{stop + start}"
 					
 					# --- apply formatting to body data from source file
 					# line_commands.each do |command|
