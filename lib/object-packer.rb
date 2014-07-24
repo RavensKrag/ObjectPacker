@@ -46,9 +46,11 @@ def run
 				
 				
 				make_from_template input_filepath, output_filepath do |lines|
-					# basic find and replace
-					# lines.find_and_replace!(/ARGS/, args)
-					# lines.find_and_replace!(/OBJECT/, obj)
+					# --- operations that apply to ALL lines ---
+					lines
+						.collect!{|l| l.strip_comment }
+						.strip_blank_lines!
+					# ------------------------------------------
 					
 					lines
 				end
