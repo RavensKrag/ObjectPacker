@@ -54,18 +54,18 @@ def run
 				
 				# === deal with source file
 					# --- load file
-					lines = File.readlines(input_filepath)
-					lines.each{ |line|  line.chomp! }
+					source_lines = File.readlines(input_filepath)
+					source_lines.each{ |line|  line.chomp! }
 					
 					# --- preprocessing on all lines
-					lines
+					source_lines
 						.collect!{|l| l.strip_comment }
 						.strip_blank_lines!
 					
 					
 					
 					# --- parse source
-					header, body = split_header_from_body(lines)
+					header, body = split_header_from_body(source_lines)
 					
 					header_data = parse_header(header)
 					
