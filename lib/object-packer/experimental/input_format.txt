@@ -1,8 +1,10 @@
 ARGS x y radius
 
+CLASS ThoughtTrace::Circle
+
 BODY {
 
-circle = ThoughtTrace::Circle.new radius
+circle = new radius
 
 circle[:physics].body.p.x = x
 circle[:physics].body.p.y = y
@@ -10,5 +12,3 @@ circle[:physics].body.p.y = y
 }
 
 OBJECT circle
-
-
