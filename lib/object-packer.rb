@@ -52,6 +52,11 @@ def run
 						.strip_blank_lines!
 					# ------------------------------------------
 					
+					
+					
+					header, body = split_header_from_body(lines)
+					
+					# pseudo return
 					lines
 				end
 			# end
@@ -84,6 +89,24 @@ def make_from_template(input_file, output_file, &block)
 	
 	return str
 end
+
+# separate header from body
+# (header exists between two lines that only consist of '---')
+def split_header_from_body(lines)
+	head, tail = 
+		lines
+			.each_with_index                          # iterate with indexes (generates pairs)
+			.partition{|x,i| i < lines.rindex('---')} # split into before and after the final '---'
+			.collect{|i| i.collect{|j|  j.first}}     # flatten array, discarding indexes
+	
+	# discard first element of both arrays
+	# (those are just the '---' lines)
+	head.shift
+	tail.shift
+	
+	return head, tail
+end
+
 
 
 
