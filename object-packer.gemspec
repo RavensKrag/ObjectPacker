@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
 	
 	# If you have other dependencies, add them here
 	# s.add_dependency "another", "~> 1.2"
+	s.add_dependency "require_all", ">=1.3.2"
 	
 	if ENABLE_C_EXTENSION
 		s.files        = Dir["{lib}/**/*.rb", "bin/*", "LICENSE", "*.md"]
