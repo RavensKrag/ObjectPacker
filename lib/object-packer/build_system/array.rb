@@ -1,4 +1,21 @@
 class Array
+	# (assumes array is already sorted, and contain no duplicates)
+	def to_range_list
+		# src: http://stackoverflow.com/a/3728942
+		# (modified a little bit)
+		self.inject([]) do |spans, n|
+			if spans.empty? || spans.last.last != n - 1
+				spans + [n..n]
+			else
+				spans[0..-2] + [spans.last.first..n]
+			end
+		end
+	end
+	
+	
+	
+	
+	
 	def find_and_replace!(regex, replacement)
 		return if replacement.nil?
 		
