@@ -1,0 +1,87 @@
+require 'rake'
+require 'rake/clean'
+
+
+require 'yaml'
+require 'pathname'
+
+
+path_to_file = File.expand_path(File.dirname(__FILE__))
+Dir.chdir path_to_file do
+	require './../lib/object-packer'
+end
+
+
+
+
+
+TEMPLATE_DIR = File.expand_path(
+					File.join('.', '..', 'lib', 'object-packer', 'templates'), 
+					File.dirname(__FILE__)
+				)
+
+
+
+
+data = YAML.load_file File.join('.', 'object-packer.config.yml')
+
+source_dir = data[:source_directory]
+output_dir = data[:output_directory]
+
+
+
+
+
+
+
+# find all files with ruby extension in the source dir, and get only the file names
+# (take the path off)
+source_files = Dir[File.join(source_dir, '*.rb')].collect{|i| Pathname.new(i).basename.to_s}
+
+# process filenames
+filepaths = 
+	source_files.collect do |filename|
+		source = filename
+		
+		templates = ["pack.rb", "unpack.rb"] # TODO: just use every template in the template dir
+		compiled_files = templates.collect{ |type| "#{filename.strip_extension}_#{type}" }
+		
+		
+		templates.zip(compiled_files).collect do |template_name, complied_filename|
+			input_filepath    = File.expand_path  source,            source_dir
+			template_filepath = File.expand_path  template_name,     TEMPLATE_DIR
+			output_filepath   = File.expand_path  complied_filename, output_dir
+			
+			
+			
+			
+			[input_filepath, template_filepath, output_filepath]
+		end
+	end
+
+
+# need to flatten one level
+# without this, there's one extra level of nesting which is not desired
+filepaths.flatten!(1)
+
+
+
+
+
+directory output_dir
+
+
+filepaths.each do |input_filepath, template_filepath, output_filepath|
+	# ------------
+	file output_filepath => [input_filepath, template_filepath] do
+		ObjectPacker.process(input_filepath, template_filepath, output_filepath)
+	end
+	# ------------
+end
+
+
+ouputted_files = filepaths.collect{ |src, template, out|  out }
+# --------
+task :default => :build
+task :build => ouputted_files
+# --------

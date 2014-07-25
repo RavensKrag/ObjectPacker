@@ -1,0 +1,3 @@
+---
+:source_directory: ./../lib/object-packer/source/
+:output_directory: ./../lib/object-packer/compiled_files/

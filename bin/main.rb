@@ -6,9 +6,8 @@ Dir.chdir path_to_file do
 end
 
 
-Dir.chdir File.join(path_to_file, '..', 'lib', 'object-packer') do
+Dir.chdir path_to_file do
 	puts Dir.pwd
 	
-	x = Foo.new('./source/', './compiled_files/')
-	x.run
+	system("rake")
 end
