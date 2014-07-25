@@ -22,8 +22,8 @@ TEMPLATE_DIR = File.expand_path(
 
 
 
-
-data = YAML.load_file File.join('.', 'object-packer.config.yml')
+config_datapath = File.join('.', 'object-packer.config.yml')
+data = YAML.load_file config_datapath
 
 source_dir = data[:source_directory]
 output_dir = data[:output_directory]
@@ -95,5 +95,5 @@ end
 ouputted_files = filepaths.collect{ |src, template, out|  out }
 # --------
 task :default => :build
-task :build => ouputted_files
+task :build => ouputted_files + [config_datapath]
 # --------
