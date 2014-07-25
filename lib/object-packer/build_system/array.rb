@@ -26,50 +26,79 @@ class Array
 	
 	
 	# remove leading and trailing empty lines
-	def strip_blank_lines
-		first_content_line = self.index{ |line| line != "" }
-		last_content_line = self.rindex{ |line| line != "" }
-		return self[first_content_line..last_content_line]
-	end
-	
-	# in-place version of above method
+	# (the name comes from String#strip! and similar)
 	def strip_blank_lines!
-		start_index = self.index{ |line| line != "" }
-		end_index = self.rindex{ |line| line != "" }
-		
-		# move markers towards the outside, but make sure they do not exceed string boundaries
-		# ie. lower end should not go before the start, high end should not go beyond the end
-		min = 0
-		max = self.size - 1
-		
-		start_index -= 1
-		end_index += 1
+		# algorithm: figure out what lines to remove - mark and execute
+		# (flag undesirables, then remove them all in one pass)
 		
 		
-		# clear all values outside of the good range
-		# skip clearing a side it's associated ranges are malformed
-		# (ie. high end is lower than low end)
-		if start_index < end_index
-			unless start_index < min
-				# clear from start to first good line
-				self[0..start_index] = nil
-			end
-			unless end_index > max
-				# clear from last good line to end
-				self[end_index..-1] = nil
-			end
-			
-			
-			self.compact! # remove the 'nil's from the last two statements
-		end
+		# work inwards from the outside until you fine lines that are not empty
+		min_i = self.index{ |line| line != "" }
+		max_i = self.rindex{ |line| line != "" }
 		
-		# what do you do if the first and last lines are the same line?
-			# I mean, this sort of implies that the body is blank, which would be weird, but...
 		
+		
+		
+		# need to keep everything in this range
+		# and discard everything else
+		# (min_i..max_i)
+		# 
+		# 
+		# need to remove all things in these two ranges
+		# (0..min_i) + (max_i..-1)
+		# well, except the limits need to be moved outwards by one position,
+		# because the initial search find the first non-empty lines
+		# 
+		# but, there might only be empty lines on one side or the other
+		
+		
+		# --- figure out what to get rid of
+		lower_range = (0..(min_i-1))
+		upper_range = ((max_i+1)..(self.size-1))
+		
+		
+		# delete ranges if malformed
+		lower_range = nil unless lower_range.max
+		upper_range = nil unless upper_range.max
+		
+		# delete lower range if it is the same as the upper one
+		# (Don't want to try to delete things twice. That could get messy)
+		upper_range = nil if upper_range == lower_range
+		
+		
+		# --- mark and execute
+		# flag unnecessary elements
+		self[lower_range] = nil if lower_range
+		self[upper_range] = nil if upper_range
+		
+		# condense array so only desirables remain
+		self.compact!
 		
 		
 		return self
 	end
+	
+	# non in-place variant of the above method
+	def strip_blank_lines
+		# algorithm: keep only the non-blank lines
+		
+		
+		# work inwards from the outside until you fine lines that are not empty
+		min_i = self.index{ |line| line != "" }
+		max_i = self.rindex{ |line| line != "" }
+		
+		
+		# keep only the things inside the range
+		range = (min_i..max_i)
+		
+		
+		unless range.max < range.min # only on ascending
+			return self.each_index.select {|i|  range.include? i }
+		else
+			return self.clone
+		end
+	end
+	
 	
 	def indent_each_line(indent_sequence="\t")
 		return self.collect{ |line|	"#{indent_sequence}#{line}" }
