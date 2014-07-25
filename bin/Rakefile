@@ -2,7 +2,6 @@ require 'rake'
 require 'rake/clean'
 
 
-require 'yaml'
 require 'pathname'
 
 
@@ -22,12 +21,11 @@ TEMPLATE_DIR = File.expand_path(
 
 
 
-config_datapath = File.join('.', 'object-packer.config.yml')
-data = YAML.load_file config_datapath
+source_dir = ENV['source_dir']
+output_dir = ENV['output_dir']
 
-source_dir = data[:source_directory]
-output_dir = data[:output_directory]
-
+puts "source: #{source_dir}"
+puts "output: #{output_dir}"
 
 
 
@@ -95,5 +93,5 @@ end
 ouputted_files = filepaths.collect{ |src, template, out|  out }
 # --------
 task :default => :build
-task :build => ouputted_files + [config_datapath]
+task :build => ouputted_files
 # --------
