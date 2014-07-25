@@ -1,3 +1,3 @@
 module ObjectPacker
-	VERSION = '0.00.2'
+	VERSION = '0.00.3'
 end
