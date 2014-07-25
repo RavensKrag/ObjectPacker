@@ -94,19 +94,17 @@ def run
 					
 					
 					# --- apply formatting to body data from source file
-					# line_commands.each do |command|
-					# 	body_data.collect!{ |body_code|  body_code.send command }
-					# end
+					line_commands.each do |command|
+						body_data.collect!{ |line| LineTransforms.send command, line, header_data }
+					end
 					
-					# document_commands.each do |command|
-					# 	body_data.send command
-					# end
+					document_commands.each do |command|
+						body_data.send command
+					end
 					
 					
 					# --- inject proper body into the template
-					i = start
-					obj = body_data
-					lines = lines.insert(i, obj).flatten!
+					lines = lines.insert(start, body_data).flatten!
 					
 					
 					
@@ -151,7 +149,7 @@ def split_header_from_body(lines)
 		lines
 			.each_with_index                          # iterate with indexes (generates pairs)
 			.partition{|x,i| i < lines.rindex('---')} # split into before and after the final '---'
-			.collect{|i| i.collect{|j|  j.first}}     # flatten array, discarding indexes
+			.collect{|i| i.collect{|j|  j.first}}     # flatten inner array, discarding indexes
 	
 	# discard first element of both arrays
 	# (those are just the '---' lines)
@@ -254,3 +252,76 @@ end
 
 end
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# applies line transforms
+module LineTransforms
+class << self
+	def example_foo(line, header_data)
+		line
+	end
+	
+	
+	
+	def strip_comments(line, header_data)
+		line.strip_comment
+	end
+	
+	def reverse_assignment(line, header_data)
+		line.split('=').collect{ |i| i.strip }.reverse.join(' = ')
+	end
+	
+	def extraction_from_initialization(line, header_data)
+		line
+	end
+	
+	def replace_object_with_self(line, header_data)
+		line
+	end
+	
+	def process_bang_command_with_arguments(line, header_data)
+		line
+	end
+	
+	def ignore_bang_commands(line, header_data)
+		line
+	end
+	
+	def special_case_property_substitution(line, header_data)
+		line
+	end
+end
+end
+
+
+# All document transforms should modify the given array in-place
+module DocumentTransforms
+class << self
+	def example_foo(body_lines, header_data)
+		
+	end
+	
+	
+	
+	def reverse!(body_lines, header_data)
+		body_lines.reverse!
+	end
+	
+	def strip_blank_lines!(body_lines, header_data)
+		
+	end
+end
+end
