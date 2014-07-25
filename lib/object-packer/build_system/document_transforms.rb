@@ -13,7 +13,7 @@ module ObjectPacker
 		end
 		
 		def strip_blank_lines!(body_lines, header_data)
-			
+			body_lines.strip_blank_lines!
 		end
 	end
 	end
