@@ -33,5 +33,5 @@ Gem::Specification.new do |s|
 	s.require_path = 'lib'
 	
 	# If you need an executable, add it here
-	# s.executables = ["newgem"]
+	s.executables = ["object-packer.rb"]
 end
