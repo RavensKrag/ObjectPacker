@@ -66,6 +66,16 @@ filepaths.flatten!(1)
 
 
 
+
+
+
+
+
+
+
+
+
+
 # make sure that the output directory exists
 # go ahead and make it, if it has not yet been made
 FileUtils.mkdir_p(output_dir) unless File.directory?(output_dir)
