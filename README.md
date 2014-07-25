@@ -9,4 +9,7 @@ So, it's easy to go from and array to any serialization format.
 
 This library focuses on converting from objects to arrays, so you can delay picking a serialization format. Or, even switch between formats (YAML, CSV, Array#pack, etc) as much as you like.
 
-It's much easier when you separate object-to-data translation from memory-to-disk transfer 
+It's much easier when you separate object-to-data translation from memory-to-disk transfer
+
+## Usage
+ObjectPacker provides a zero-argument executable which expects a configuration file in the working directory called object-packer.config.yml (similar to Rake and make).  This config file is a YAML document that specifies the source and output directories (see bin/ for an example config)
