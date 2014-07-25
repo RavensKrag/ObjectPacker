@@ -28,20 +28,20 @@ class << self
 		
 		
 		# === deal with source file
-			# --- load file
-			source_lines = File.readlines(input_filepath)
-			source_lines.each{ |line|  line.chomp! }
-			
-			# --- preprocessing on all lines
-			source_lines
-				.collect!{|l| l.strip_comment }
-				.strip_blank_lines!
-			
-			# --- parse source
-			header, body = split_header_from_body(source_lines)
-			
-			header_data = parse_header(header)
-			body_data = body
+		# --- load file
+		source_lines = File.readlines(input_filepath)
+		source_lines.each{ |line|  line.chomp! }
+		
+		# --- preprocessing on all lines
+		source_lines
+			.collect!{|l| l.strip_comment }
+			.strip_blank_lines!
+		
+		# --- parse source
+		header, body = split_header_from_body(source_lines)
+		
+		header_data = parse_header(header)
+		body_data = body
 		
 		
 		# === deal with template -> final complied output
@@ -118,9 +118,9 @@ class << self
 	def split_header_from_body(lines)
 		head, tail = 
 			lines
-				.each_with_index                          # iterate with indexes (generates pairs)
-				.partition{|x,i| i < lines.rindex('---')} # split into before and after the final '---'
-				.collect{|i| i.collect{|j|  j.first}}     # flatten inner array, discarding indexes
+			.each_with_index                          # iterate with indexes (generates pairs)
+			.partition{|x,i| i < lines.rindex('---')} # split into before and after the final '---'
+			.collect{|i| i.collect{|j|  j.first}}     # flatten inner array, discarding indexes
 		
 		# discard first element of both arrays
 		# (those are just the '---' lines)
