@@ -306,7 +306,10 @@ class << self
 	
 	# blank out lines with bang commands
 	def ignore_bang_commands(line, header_data)
-		line
+		regexp = /.*!(?:\(.*\))?/ # some_text!(foo) <-- parens and contents optional
+		
+		# blank out the line, or return it as-is
+		line =~ regexp  ? '' : line
 	end
 	
 	def special_case_property_substitution(line, header_data)
