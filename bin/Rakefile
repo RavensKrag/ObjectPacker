@@ -71,6 +71,15 @@ filepaths.flatten!(1)
 
 
 
+# list files that define transforms
+# build system needs to know about these files,
+# because changing them means everything needs to be built again
+build_files = [
+	File.join('.', '..', 'lib', 'object-packer', 'build_system', 'line_transforms.rb'),
+	File.join('.', '..', 'lib', 'object-packer', 'build_system', 'document_transforms.rb'),
+]
+build_files.collect!{ |path|  File.expand_path(path, path_to_file) }
+
 
 
 
@@ -83,7 +92,7 @@ FileUtils.mkdir_p(output_dir) unless File.directory?(output_dir)
 
 filepaths.each do |input_filepath, template_filepath, output_filepath|
 	# ------------
-	file output_filepath => [input_filepath, template_filepath] do
+	file output_filepath => [input_filepath, template_filepath] + build_files do
 		ObjectPacker.process(input_filepath, template_filepath, output_filepath)
 	end
 	# ------------
