@@ -43,6 +43,7 @@ class << self
 		header_data = parse_header(header)
 		body_data   = parse_body(body, header_data)
 		
+		# contains: 'OBJECT', 'FIELDS', 'CLASS', 'ARGS'
 		data = header_data.merge body_data
 		
 		
@@ -51,7 +52,7 @@ class << self
 			# --- basic find-and-replace
 			lines.find_and_replace!(/CLASS/,  data['CLASS'])
 			lines.find_and_replace!(/FIELDS/, data['FIELDS'].join(', '))
-			lines.find_and_replace!(/OBJECT/, data['OBJECT'][:name])
+			lines.find_and_replace!(/OBJECT/, data['OBJECT'])
 			
 			
 			# --- parse body formatting in template
@@ -163,28 +164,13 @@ class << self
 	def parse_body(body, header_data)
 		# --- find the line where the OBJECT is initialized, and extract class and arguments
 		line = body.find{ |line|  line =~ /#{header_data['OBJECT']}\s*=\s*.*/ }
-		puts line
 		
 		object_name, initialization_step = line.split('=').collect!{ |x|  x.strip! }
-		puts initialization_step
 		
 		# initialization can have two formats
 		# => CLASS(arg, arg, ..., arg)
 		# => CLASS arg, arg, ..., arg
 		# (essentially, with or without parentheses)
-		
-		# regexp = /(?<class>.*?)(?:\.new)(?:\(|\s+)(?<args>.*)(\){0,1})/
-		# regexp = /(?<class>.*?)(?:\.new)(?:\(|\s+)(?<args>.*)(\)?)/
-		
-		
-		
-		# regexp = /(?<class>.*)(?:\.new)\(?\s*(?<args>.*)\s*(\)?)/
-		# regexp = /(?<class>.*)(?:\.new)\(?\s*(?<args>.*)\s(\)?)/
-		
-		
-		/(?<class>.*)(?:\.new)((\(?<args1>.*\))|(\s*?(?<args2>.*)\s*?))/
-		regexp = /(?<class>.*)(?:\.new)((\((?<args1>.*)\))|(\s*(?<args2>.*)\s*))/
-		regexp = /(?<class>.*)(?:\.new)((\(\s*(?<args1>.*)\s*\))|(\s*(?<args2>.*)\s*))/
 		
 		
 		# regex explanation:
@@ -194,36 +180,26 @@ class << self
 			# args2 : no parentheses
 		
 		regexp = /(?<class>.*)(?:\.new)((\(\s*(?<args1>.*?)\s*\))|(\s*(?<args2>.*)\s*))/
+		# this works fine, but it assumes that parentheses are balanced if they exist
 		
-		# this regex only works as expected if parentheses are balanced
-		# unbalanced parens produces really weird behavior
-		
-		
-		
-		# having problems with 'CLASS.new arg, one, two )'
-		# open only is rejected, but close only has issues...
-		# the match grabs everything up to (but excluding) the unmatched close parens
-		
-		# the above regex doesn't stop '( arg, one, two'
-		# this one right here does (so it's just unmatched close that's a problem)
-		# regexp = /(?<class>.*)(?:\.new)((\(\s*(?<args1>.*?)\s*\))|(\s*(?<args2>[^()]*)[\s^)]*))/
+		raise "Unmatched parenthesis in #{header_data['OBJECT']} initialization." unless initialization_step.balanced_parens?
 		
 		
-		# this regex has a special clause to catch unmatched close
-		# regexp = /(?<class>.*)(?:\.new)((\(\s*(?<args1>.*?)\s*\))|(?<args3>.*\))|(\s*(?<args2>[^()]*)[\s^)]*))/
-		# ... but now I can't tell unmatched open from no-args
-		# in either case args2 is '', the empty string
 		
 		
 		matchdata = initialization_step.match regexp
-			p matchdata
 		
 		klass = matchdata['class']
 		args = matchdata['args1'] || matchdata['args2']
 		
+		
+		
 		args = args.split(/\s*,\s*/) # comma delineated list, any amount of whitespace is OK
 		
-		p ({:class => klass, :args => args})
+		hash = {'CLASS' => klass, 'ARGS' => args}
+		
+		
+		return hash
 	end
 	
 	

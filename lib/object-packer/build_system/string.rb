@@ -71,4 +71,21 @@ class String
 	def whitespace_only?
 		self =~ /^\s*$/
 	end
+	
+	
+	
+	def balanced_parens?
+		counter = 0
+		self.each_char do |char|
+			if char == '('
+				counter += 1
+			elsif char == ')'
+				counter -= 1
+			end
+			
+			return false if counter < 0
+		end
+		
+		return counter == 0
+	end
 end
