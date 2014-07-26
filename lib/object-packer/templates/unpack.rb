@@ -20,7 +20,7 @@ klass.instance_eval do
 def unpack(FIELDS)
 	BODY {
 		
-	}.strip_blank_lines!
+	}.strip_blank_lines!.indent_each_line!
 
 	return OBJECT
 

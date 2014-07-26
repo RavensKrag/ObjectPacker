@@ -29,7 +29,7 @@ def pack
 		ignore_bang_commands
 		
 		special_case_property_substitution
-	}.reverse!.strip_blank_lines!
+	}.reverse!.strip_blank_lines!.indent_each_line!
 
 	return FIELDS
 
