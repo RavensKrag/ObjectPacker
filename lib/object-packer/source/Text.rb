@@ -14,10 +14,9 @@
 
 
 ---
-CLASS ThoughtTrace::Text
 FIELDS font_name x y height string
 
-OBJECT text(font)
+OBJECT text
 ---
 
 font = ThoughtTrace::Font.new font_name
