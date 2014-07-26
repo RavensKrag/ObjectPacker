@@ -60,6 +60,7 @@ filepaths =
 
 # need to flatten one level
 # without this, there's one extra level of nesting which is not desired
+# (actually, this might always be n-2, where n is the number of fields)
 filepaths.flatten!(1)
 
 
