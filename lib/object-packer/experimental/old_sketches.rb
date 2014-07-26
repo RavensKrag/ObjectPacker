@@ -174,3 +174,20 @@ re = %r{
 # (http://stackoverflow.com/a/1952970/571592)
 # you should not be using regular expressions for this sort of thing
 # I'm not quite sure what sort of thing you should be using, though...
+
+
+
+
+
+
+MATCHING_CURLY_BRACES = %r{
+	  (?<re>
+	    \{
+	      (?:
+	        (?> [^\{\}]+ )
+	        |
+	        \g<re>
+	      )*
+	    \}
+	  )
+	}x
