@@ -20,7 +20,29 @@ module ObjectPacker
 		# format: Class.new arg1, arg2, ..., argn = var
 		# result: arg = var.arg
 		def extraction_from_initialization(line, header_data)
-			line
+			# only perform operation if this is indeed the initialization line
+			args = header_data['ARGS'].join('\s*,\s*')
+			
+			args_with_parens = "(\(\s*(#{args})\s*\))"
+			args_without_parens = "(\s*(#{args})\s*)"
+			args_w_or_wo = "(#{args_with_parens})|(#{args_without_parens})"
+			
+			regexp = /#{header_data['CLASS']}.new#{args_w_or_wo}\s*=\s*#{header_data['OBJECT']}/
+			return line unless line =~ regexp
+			
+			
+			
+			
+			
+			variable_name = header_data['OBJECT']
+			
+			statements = 
+				header_data['ARGS'].collect do |arg|
+					"#{arg} = #{variable_name}.#{arg}"
+				end
+			
+			
+			return statements.join "\n"
 		end
 		
 		# OBJECT is the thing being examined
