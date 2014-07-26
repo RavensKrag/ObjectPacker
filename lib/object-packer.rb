@@ -41,15 +41,17 @@ class << self
 		header, body = split_header_from_body(source_lines)
 		
 		header_data = parse_header(header)
-		body_data = body
+		body_data   = parse_body(body, header_data)
+		
+		data = header_data.merge body_data
 		
 		
 		# === deal with template -> final complied output
 		make_from_template template_filepath, output_filepath do |lines|
 			# --- basic find-and-replace
-			lines.find_and_replace!(/CLASS/,  header_data['CLASS'])
-			lines.find_and_replace!(/FIELDS/, header_data['FIELDS'].join(', '))
-			lines.find_and_replace!(/OBJECT/, header_data['OBJECT'][:name])
+			lines.find_and_replace!(/CLASS/,  data['CLASS'])
+			lines.find_and_replace!(/FIELDS/, data['FIELDS'].join(', '))
+			lines.find_and_replace!(/OBJECT/, data['OBJECT'][:name])
 			
 			
 			# --- parse body formatting in template
@@ -70,16 +72,16 @@ class << self
 			
 			# --- apply formatting to body data from source file
 			line_commands.each do |command|
-				body_data.collect!{ |line| LineTransforms.send command, line, header_data }
+				body.collect!{ |line| LineTransforms.send command, line, data }
 			end
 			
 			document_commands.each do |command|
-				DocumentTransforms.send command, body_data, header_data
+				DocumentTransforms.send command, body, data
 			end
 			
 			
 			# --- inject proper body into the template
-			lines = lines.insert(start, body_data).flatten!
+			lines = lines.insert(start, body).flatten!
 			
 			
 			
@@ -112,7 +114,13 @@ class << self
 		
 		return str
 	end
-
+	
+	
+	
+	
+	
+	
+	# --- Deal with source file  ---
 	# separate header from body
 	# (header exists between two lines that only consist of '---')
 	def split_header_from_body(lines)
@@ -144,40 +152,89 @@ class << self
 			end
 		
 		
-		
-		
-		hash['CLASS'] = hash['CLASS'].first # only one
-		
-		
 		# hash['FIELDS'] # this is totally fine
 		
-		
-		
-		hash['OBJECT'] = hash['OBJECT'].join # got split in a weird place
-			# name(arg, arg, arg, ..., arg)
-			
-			# name : part before the parens start
-			# args : part inside the parens (excluding parens)
-			
-			matchdata = /(?<name>.*?)\s*\((?<args>.*)\)/.match hash['OBJECT']
-			
-			
-			# format it
-			data = {
-				:name => matchdata[:name],
-				:args => matchdata[:args].split(/,\s*/)
-			}
-			
-			
-			# pack it up
-			hash['OBJECT'] = data
+		hash['OBJECT'] = hash['OBJECT'].first # only one
 		
 
 		return hash
 	end
-
-
-
+	
+	def parse_body(body, header_data)
+		# --- find the line where the OBJECT is initialized, and extract class and arguments
+		line = body.find{ |line|  line =~ /#{header_data['OBJECT']}\s*=\s*.*/ }
+		puts line
+		
+		object_name, initialization_step = line.split('=').collect!{ |x|  x.strip! }
+		puts initialization_step
+		
+		# initialization can have two formats
+		# => CLASS(arg, arg, ..., arg)
+		# => CLASS arg, arg, ..., arg
+		# (essentially, with or without parentheses)
+		
+		# regexp = /(?<class>.*?)(?:\.new)(?:\(|\s+)(?<args>.*)(\){0,1})/
+		# regexp = /(?<class>.*?)(?:\.new)(?:\(|\s+)(?<args>.*)(\)?)/
+		
+		
+		
+		# regexp = /(?<class>.*)(?:\.new)\(?\s*(?<args>.*)\s*(\)?)/
+		# regexp = /(?<class>.*)(?:\.new)\(?\s*(?<args>.*)\s(\)?)/
+		
+		
+		/(?<class>.*)(?:\.new)((\(?<args1>.*\))|(\s*?(?<args2>.*)\s*?))/
+		regexp = /(?<class>.*)(?:\.new)((\((?<args1>.*)\))|(\s*(?<args2>.*)\s*))/
+		regexp = /(?<class>.*)(?:\.new)((\(\s*(?<args1>.*)\s*\))|(\s*(?<args2>.*)\s*))/
+		
+		
+		# regex explanation:
+			# match class as portion before '.new',
+			# and then match either
+			# args1 : includes parentheses
+			# args2 : no parentheses
+		
+		regexp = /(?<class>.*)(?:\.new)((\(\s*(?<args1>.*?)\s*\))|(\s*(?<args2>.*)\s*))/
+		
+		# this regex only works as expected if parentheses are balanced
+		# unbalanced parens produces really weird behavior
+		
+		
+		
+		# having problems with 'CLASS.new arg, one, two )'
+		# open only is rejected, but close only has issues...
+		# the match grabs everything up to (but excluding) the unmatched close parens
+		
+		# the above regex doesn't stop '( arg, one, two'
+		# this one right here does (so it's just unmatched close that's a problem)
+		# regexp = /(?<class>.*)(?:\.new)((\(\s*(?<args1>.*?)\s*\))|(\s*(?<args2>[^()]*)[\s^)]*))/
+		
+		
+		# this regex has a special clause to catch unmatched close
+		# regexp = /(?<class>.*)(?:\.new)((\(\s*(?<args1>.*?)\s*\))|(?<args3>.*\))|(\s*(?<args2>[^()]*)[\s^)]*))/
+		# ... but now I can't tell unmatched open from no-args
+		# in either case args2 is '', the empty string
+		
+		
+		matchdata = initialization_step.match regexp
+			p matchdata
+		
+		klass = matchdata['class']
+		args = matchdata['args1'] || matchdata['args2']
+		
+		args = args.split(/\s*,\s*/) # comma delineated list, any amount of whitespace is OK
+		
+		p ({:class => klass, :args => args})
+	end
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	# --- Deal with template ---
 	def find_body(template_lines)
 		start = template_lines.each_with_index.find{|x,i| x =~ /BODY\s*\{/ }.last
 			puts "start : #{start}"
