@@ -52,7 +52,39 @@ module ObjectPacker
 		# but the replacement is not on the OBJECT tag,
 		# but on variables within the BODY text that have the same name
 		def replace_object_with_self(line, header_data)
-			line
+			# NOTE: be careful not to replace all instances of the OBJECT name, just the variable names
+			
+			# consider the case when there's an equals sign
+			# foo = OBJECT.some.other.things		(not necessarily dot operator delineated)
+			
+			# has to just by the OBJECT string by itself
+			# if it has anything around it, it can only be
+			# an equal sign and some whitespace before,
+			# or some sort of accessing operators after
+				# dot operator
+				# array-style access --> [] brackets (most likely brackets would have some contents)
+			
+			
+			# exp = /(?:\=\s*)?(#{header_data['OBJECT']})(?:\[.*\])?(?:\..*)?/
+			# puts @string.scan exp # DEBUG OUT
+			# @string.sub!(exp, 'self')
+			
+			
+			# # can't seem to get non-capturing groups working with #sub, so I'll do it this way
+			# exp = /(\=\s*)?(#{header_data['OBJECT']})(\[.*\])?(\..*)?/
+			# @string.sub!(exp, '\1self\3\4') # '\1\2\3\4' is orig string (replace second group only)
+			
+			
+			# can't seem to get non-capturing groups working with #sub, so I'll do it this way
+			exp = /(\=\s*)?(#{header_data['OBJECT']})((\[.*\])|(\..*))/
+			line.gsub!(exp, '\1self\4\5')
+			# '\1\2\4\5' is orig string (replace second group only) (\3 wraps \4 and \5, so omit it)
+			# NOTE: this expression no longer matches OBJECT by itself
+			# but that's not really useful for the problem I'm trying to solve here
+			
+			
+			
+			return line
 		end
 		
 		# blank out lines with bang commands
