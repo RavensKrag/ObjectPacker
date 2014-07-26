@@ -65,16 +65,6 @@ module ObjectPacker
 				# array-style access --> [] brackets (most likely brackets would have some contents)
 			
 			
-			# exp = /(?:\=\s*)?(#{header_data['OBJECT']})(?:\[.*\])?(?:\..*)?/
-			# puts @string.scan exp # DEBUG OUT
-			# @string.sub!(exp, 'self')
-			
-			
-			# # can't seem to get non-capturing groups working with #sub, so I'll do it this way
-			# exp = /(\=\s*)?(#{header_data['OBJECT']})(\[.*\])?(\..*)?/
-			# @string.sub!(exp, '\1self\3\4') # '\1\2\3\4' is orig string (replace second group only)
-			
-			
 			# can't seem to get non-capturing groups working with #sub, so I'll do it this way
 			exp = /(\=\s*)?(#{header_data['OBJECT']})((\[.*\])|(\..*))/
 			line.gsub!(exp, '\1self\4\5')
