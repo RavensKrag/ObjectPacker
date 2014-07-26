@@ -71,10 +71,11 @@ filepaths.flatten!(1)
 
 
 
-# list files that define transforms
+# list files that define and execute transforms
 # build system needs to know about these files,
 # because changing them means everything needs to be built again
 build_files = [
+	File.join('.', '..', 'lib', 'object-packer.rb'),
 	File.join('.', '..', 'lib', 'object-packer', 'build_system', 'line_transforms.rb'),
 	File.join('.', '..', 'lib', 'object-packer', 'build_system', 'document_transforms.rb'),
 ]
