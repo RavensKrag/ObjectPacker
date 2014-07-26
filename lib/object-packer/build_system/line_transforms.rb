@@ -79,7 +79,24 @@ module ObjectPacker
 		
 		# blank out lines with bang commands
 		def process_bang_command_with_arguments(line, header_data)
-			line
+			# obj.some_text!(foo) --> foo = obj.foo
+			# (similar pattern seen in extraction_from_initialization)
+			
+			str = line.gsub /\s*?(.*)\.(.*)\!(\((.*)\))/, '\4 = \1.\4'
+							# \4 is just \3 with the parentheses
+			
+			# remove any possible whitespace from within the original parentheses
+			# can't have any of that when it gets turned into an accessor method
+			str.split_and_rejoin do |lines|
+				lines.collect! do |l|
+					parts = l.split('=')
+					parts.each{ |i| i.split.join }
+					
+					parts.join ' = '
+				end
+			end
+			
+			return str
 		end
 		
 		# blank out lines with bang commands
