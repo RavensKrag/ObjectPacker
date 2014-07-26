@@ -74,6 +74,7 @@ class << self
 			# --- apply formatting to body data from source file
 			line_commands.each do |command|
 				body.collect!{ |line| LineTransforms.send command, line, data }
+				body.flatten!
 			end
 			# TODO: allow for line transforms to send multiple lines back (would just need to flatten)
 			

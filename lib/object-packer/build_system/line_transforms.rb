@@ -42,8 +42,8 @@ module ObjectPacker
 						"#{arg} = #{var_name}.#{accessor}"
 					end
 			
-			# merge the lines into one blob that will be appended to file
-			return lines.join("\n")
+			# return multiple lines
+			return lines
 				# WARNING: this means that the Array containing all lines will not necessarily have one array entry per line, as this blob could have multiple lines encoded into one string.
 		end
 		
