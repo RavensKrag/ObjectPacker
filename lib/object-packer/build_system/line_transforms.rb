@@ -20,29 +20,31 @@ module ObjectPacker
 		# format: Class.new arg1, arg2, ..., argn = var
 		# result: arg = var.arg
 		def extraction_from_initialization(line, header_data)
-			# only perform operation if this is indeed the initialization line
-			args = header_data['ARGS'].join('\s*,\s*')
-			
-			args_with_parens = "(\(\s*(#{args})\s*\))"
-			args_without_parens = "(\s*(#{args})\s*)"
-			args_w_or_wo = "(#{args_with_parens})|(#{args_without_parens})"
-			
-			regexp = /#{header_data['CLASS']}.new#{args_w_or_wo}\s*=\s*#{header_data['OBJECT']}/
-			return line unless line =~ regexp
+			return line unless line.include? '.new'
 			
 			
 			
+			parts = line.split('=').collect{ |i| i.strip }
+			# ['Class.new arg1, arg2, ..., argn', 'var']
+			
+			# split up into three segments
+			class_name = parts[0].split('.new')[0].strip # 'Class'
+			arg_blob   = parts[0].split('.new')[1].strip # 'arg1, arg2, ..., argn'
+			var_name   = parts[1]                        # 'var'
 			
 			
-			variable_name = header_data['OBJECT']
+			# take all arguments,
+			# create one line for each argument that needs to be extracted from the object
+			lines =	arg_blob.split(/,\s*/).collect do |arg|
+						# accessor should not repeat the name of the variable
+						accessor =	arg.sub(/#{var_name}_/, '')
+						
+						"#{arg} = #{var_name}.#{accessor}"
+					end
 			
-			statements = 
-				header_data['ARGS'].collect do |arg|
-					"#{arg} = #{variable_name}.#{arg}"
-				end
-			
-			
-			return statements.join "\n"
+			# merge the lines into one blob that will be appended to file
+			return lines.join("\n")
+				# WARNING: this means that the Array containing all lines will not necessarily have one array entry per line, as this blob could have multiple lines encoded into one string.
 		end
 		
 		# OBJECT is the thing being examined

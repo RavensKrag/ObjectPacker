@@ -75,6 +75,7 @@ class << self
 			line_commands.each do |command|
 				body.collect!{ |line| LineTransforms.send command, line, data }
 			end
+			# TODO: allow for line transforms to send multiple lines back (would just need to flatten)
 			
 			document_commands.each do |command|
 				DocumentTransforms.send command, body, data
