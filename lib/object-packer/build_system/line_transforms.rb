@@ -108,7 +108,11 @@ module ObjectPacker
 		end
 		
 		def special_case_property_substitution(line, header_data)
-			line
+			[:width, :height, :radius].each do |property|
+				line.gsub! /self.#{property}/, "self[:physics].shape.#{property}"
+			end
+			
+			return line
 		end
 	end
 	end
