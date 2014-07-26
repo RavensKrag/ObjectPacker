@@ -74,7 +74,7 @@ class << self
 			end
 			
 			document_commands.each do |command|
-				body_data.send command
+				DocumentTransforms.send command, body_data, header_data
 			end
 			
 			
